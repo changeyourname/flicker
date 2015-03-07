@@ -1,0 +1,99 @@
+Information: Building the design 'BHR'. (HDL-193)
+Warning: Cannot find the design 'BHR' in the library 'WORK'. (LBR-1)
+Error: Width mismatch on port 'issueqPacket0_o' of reference to 'Dispatch' in 'FABSCALAR'. (LINK-3)
+Warning: Unable to resolve reference 'Dispatch' in 'FABSCALAR'. (LINK-5)
+Information: Building the design 'IssueQueue'. (HDL-193)
+Warning: Cannot find the design 'IssueQueue' in the library 'WORK'. (LBR-1)
+Information: Building the design 'IssueqRegRead'. (HDL-193)
+Warning: Cannot find the design 'IssueqRegRead' in the library 'WORK'. (LBR-1)
+Information: Building the design 'RegRead'. (HDL-193)
+Warning: Cannot find the design 'RegRead' in the library 'WORK'. (LBR-1)
+Information: Building the design 'RegReadExecute'. (HDL-193)
+Warning: Cannot find the design 'RegReadExecute' in the library 'WORK'. (LBR-1)
+Information: Building the design 'LSU'. (HDL-193)
+Warning: Cannot find the design 'LSU' in the library 'WORK'. (LBR-1)
+Information: Building the design 'L1ICache'. (HDL-193)
+Warning: Cannot find the design 'L1ICache' in the library 'WORK'. (LBR-1)
+Information: Building the design 'SRAM_4R8W' instantiated from design 'InstructionBuffer' with
+	the parameters "16,4,126". (HDL-193)
+Warning: Cannot find the design 'SRAM_4R8W' in the library 'WORK'. (LBR-1)
+Information: Building the design 'SRAM_4R4W' instantiated from design 'ActiveList' with
+	the parameters "128,7,55". (HDL-193)
+Warning: Cannot find the design 'SRAM_4R4W' in the library 'WORK'. (LBR-1)
+Information: Building the design 'SRAM_4R6W' instantiated from design 'ActiveList' with
+	the parameters "128,7,8". (HDL-193)
+Warning: Cannot find the design 'SRAM_4R6W' in the library 'WORK'. (LBR-1)
+Information: Building the design 'SRAM_4R6W' instantiated from design 'ActiveList' with
+	the parameters "128,7,32". (HDL-193)
+Warning: Cannot find the design 'SRAM_4R6W' in the library 'WORK'. (LBR-1)
+Information: Building the design 'SRAM_4R1W' instantiated from design 'ActiveList' with
+	the parameters "128,7,1". (HDL-193)
+Warning: Cannot find the design 'SRAM_4R1W' in the library 'WORK'. (LBR-1)
+Information: Building the design 'SRAM_4R4W_AMT' instantiated from design 'ArchMapTable' with
+	the parameters "34,6,7". (HDL-193)
+Warning: Cannot find the design 'SRAM_4R4W_AMT' in the library 'WORK'. (LBR-1)
+Information: Building the design 'SRAM_1R1W' instantiated from design 'BTB' with
+	the parameters "1024,10,17". (HDL-193)
+Warning: Cannot find the design 'SRAM_1R1W' in the library 'WORK'. (LBR-1)
+Information: Building the design 'SRAM_1R1W' instantiated from design 'BTB' with
+	the parameters "1024,10,35". (HDL-193)
+Warning: Cannot find the design 'SRAM_1R1W' in the library 'WORK'. (LBR-1)
+Information: Building the design 'SRAM_2R1W_HY' instantiated from design 'BranchPrediction' with
+	the parameters "32768,15,2,4,2". (HDL-193)
+Warning: Cannot find the design 'SRAM_2R1W_HY' in the library 'WORK'. (LBR-1)
+Information: Building the design 'SRAM_4R4W_FREELIST' instantiated from design 'SpecFreeList' with
+	the parameters "94,7,7". (HDL-193)
+Warning: Cannot find the design 'SRAM_4R4W_FREELIST' in the library 'WORK'. (LBR-1)
+Information: Building the design 'SRAM_8R4W_RMT' instantiated from design 'RenameMapTable' with
+	the parameters "34,6,7". (HDL-193)
+Warning: Cannot find the design 'SRAM_8R4W_RMT' in the library 'WORK'. (LBR-1)
+Error: Width mismatch on port 'result_o' of reference to 'Complex_ALU' in 'FU1'. (LINK-3)
+Warning: Unable to resolve reference 'Complex_ALU' in 'FU1'. (LINK-5)
+Warning: Unable to resolve reference 'BHR' in 'FABSCALAR'. (LINK-5)
+Warning: Unable to resolve reference 'IssueQueue' in 'FABSCALAR'. (LINK-5)
+Warning: Unable to resolve reference 'IssueqRegRead' in 'FABSCALAR'. (LINK-5)
+Warning: Unable to resolve reference 'RegRead' in 'FABSCALAR'. (LINK-5)
+Warning: Unable to resolve reference 'RegReadExecute' in 'FABSCALAR'. (LINK-5)
+Warning: Unable to resolve reference 'LSU' in 'FABSCALAR'. (LINK-5)
+Warning: Unable to resolve reference 'L1ICache' in 'FetchStage1'. (LINK-5)
+Warning: Unable to resolve reference 'SRAM_4R8W' in 'InstructionBuffer'. (LINK-5)
+Warning: Unable to resolve reference 'SRAM_4R4W' in 'ActiveList'. (LINK-5)
+Warning: Unable to resolve reference 'SRAM_4R6W' in 'ActiveList'. (LINK-5)
+Warning: Unable to resolve reference 'SRAM_4R1W' in 'ActiveList'. (LINK-5)
+Warning: Unable to resolve reference 'SRAM_4R4W_AMT' in 'ArchMapTable'. (LINK-5)
+Warning: Unable to resolve reference 'SRAM_1R1W' in 'BTB'. (LINK-5)
+Warning: Unable to resolve reference 'SRAM_2R1W_HY' in 'BranchPrediction'. (LINK-5)
+Warning: Unable to resolve reference 'SRAM_4R4W_FREELIST' in 'SpecFreeList'. (LINK-5)
+Warning: Unable to resolve reference 'SRAM_8R4W_RMT' in 'RenameMapTable'. (LINK-5)
+ 
+****************************************
+Report : area
+Design : FABSCALAR
+Version: F-2011.09-SP3
+Date   : Fri Mar  6 13:29:34 2015
+****************************************
+
+Information: Updating design information... (UID-85)
+Warning: Design 'FABSCALAR' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+Library(s) Used:
+
+    saed90nm_typ (File: /research/brg/install/bare-pkgs/noarch/synopsys-90nm/toolflow/cells.db)
+
+Number of ports:                          332
+Number of nets:                         12450
+Number of cells:                           50
+Number of combinational cells:             35
+Number of sequential cells:                 0
+Number of macros:                           0
+Number of buf/inv:                         11
+Number of references:                      31
+
+Combinational area:       328305.254687
+Noncombinational area:    152476.876274
+Net Interconnect area:    62392.039402 
+
+Total cell area:          480782.130961
+Total area:               543174.170363
+
+Information: This design contains black box (unknown) components. (RPT-8)
+1
