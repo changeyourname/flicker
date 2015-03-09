@@ -13,37 +13,45 @@
 #*******************************************************************************
 
 #date
-set base_dir "../cores/Core-12/"
+set base_dir "../cores/Core-12"
 set stdcells_home /research/brg/install/bare-pkgs/noarch/synopsys-90nm/toolflow
-# setup name of the clock in your design.
 set clkname clock
 
 # set variable "modname" to the name of topmost module in design
 set modname FABSCALAR
-
 
 #set the number of digits to be used for delay results
 set report_default_significant_digits 4
 
 set filename_log_file ganga.log
 
-source scripts/read_design.tcl
+source scripts/read_design.tcl > log/read_design_log.txt
 
 current_design $modname
+
+write_file -format ddc -hierarchy -output ./results/FABSCALAR_read_file.ddc
 
 #-------------------------------------------------------------------------------
 # Set the synthetic library variable to enable use of desigware blocks.
 #-------------------------------------------------------------------------------
+# set synthetic_library [list dw_foundation.sldb]
  
- set_app_var search_path "/research/brg/install/bare-pkgs/noarch/synopsys-90nm/toolflow"
- set synthetic_library [list dw_foundation.sldb]
- set target_library "cells.db"
- set link_library   [concat  $target_library $synthetic_library]
+# set target_library NangateOpenCellLibrary_typical_conditional_nldm_nowl.db
+# set link_library   [concat  $target_library $synthetic_library]
+
+set_app_var search_path "/research/brg/install/bare-pkgs/noarch/synopsys-90nm/toolflow"
+set synthetic_library [list dw_foundation.sldb]
+set target_library "cells.db"
+set link_library   [concat  $target_library $synthetic_library]
 
 #-------------------------------------------------------------------------------
 # Specify a 2000ps clock period with 50% duty cycle and a skew of 10ps. 
 #-------------------------------------------------------------------------------
- set CLK_PER  2
+
+ # setup name of the clock in your design.
+# set clkname clock
+
+ set CLK_PER  100
  set REDUCE   0.01
  set CLK_SKEW 0.01
  create_clock -name $clkname -period $CLK_PER -waveform "0 [expr $CLK_PER / 2]" $clkname
@@ -79,15 +87,15 @@ current_design $modname
  set path_delay1 0.5
  set path_delay2 0.4
  
- set_max_delay [expr $CLK_PER-$path_delay1] -from [find pin -hierarchy "btbTag/*_o*"]
- set_max_delay [expr $CLK_PER-$path_delay2] -to   [find pin -hierarchy "btbTag/*_i*"]
- set_max_delay [expr $CLK_PER-$path_delay1] -from [find pin -hierarchy "btbData/*_o*"]
- set_max_delay [expr $CLK_PER-$path_delay2] -to   [find pin -hierarchy "btbData/*_i*"]
+# set_max_delay [expr $CLK_PER-$path_delay1] -from [find pin -hierarchy "btbTag/*_o*"]
+# set_max_delay [expr $CLK_PER-$path_delay2] -to   [find pin -hierarchy "btbTag/*_i*"]
+# set_max_delay [expr $CLK_PER-$path_delay1] -from [find pin -hierarchy "btbData/*_o*"]
+# set_max_delay [expr $CLK_PER-$path_delay2] -to   [find pin -hierarchy "btbData/*_i*"]
 
  set path_delay3 0.5
  set path_delay4 0.4 
- set_max_delay [expr $CLK_PER-$path_delay3] -from [find pin -hierarchy "CounterTable/*_o*"]
- set_max_delay [expr $CLK_PER-$path_delay4] -to   [find pin -hierarchy "CounterTable/*_i*"]
+# set_max_delay [expr $CLK_PER-$path_delay3] -from [find pin -hierarchy "CounterTable/*_o*"]
+# set_max_delay [expr $CLK_PER-$path_delay4] -to   [find pin -hierarchy "CounterTable/*_i*"]
 
 
  set path_delay5 0.45
@@ -97,8 +105,8 @@ current_design $modname
 
  set path_delay11 0.81
  set path_delay12 0.6
- set_max_delay [expr $CLK_PER-$path_delay11] -from [find pin -hierarchy "PhyRegFile/*_o*"]
- set_max_delay [expr $CLK_PER-$path_delay12] -to   [find pin -hierarchy "PhyRegFile/*_i*"]
+# set_max_delay [expr $CLK_PER-$path_delay11] -from [find pin -hierarchy "PhyRegFile/*_o*"]
+# set_max_delay [expr $CLK_PER-$path_delay12] -to   [find pin -hierarchy "PhyRegFile/*_i*"]
 
  
  set path_delay13 0.409
@@ -130,26 +138,33 @@ current_design $modname
  set_false_path -through [find pin -hierarchy "fu1/*"]
 
 
- replace_synthetic -ungroup
+ replace_synthetic -ungroup > log/replace_synthetic_log.txt
 
- uniquify
+# ungroup -all -flatten > /log/upgroup_flatten_log.txt
 
- check_design > ./check_design.rpt
+ uniquify > log/uniquify_log.txt
 
- link 
+ check_design > log/check_design_log.txt
+
+ link > log/link_log.txt
 
 #-------------------------------------------------------------------------------
 # Following synthesizes the design.
 #-------------------------------------------------------------------------------
- compile -map_effort low
- #date
+ compile -map_effort low > log/compile_log.txt
+#-map_effort low
+ date
 
 #-------------------------------------------------------------------------------
 # Following generates synthesized design netlist and constraint file for 
 # place&route.
 #-------------------------------------------------------------------------------
- report_area > ./area.rpt
- report_power > ./power.rpt 
- write -hierarchy -f verilog -o ./FABSCALAR.v
- write_sdc ./FABSCALAR.sdc
- 
+ report_qor > results/report_qor_default.txt
+ report_constraint -all_violators > all_violators.txt
+ report_timing > results/report_timing_default.txt
+ report_area > results/area.txt
+ report_power > results/power.txt
+ write_file -format ddc -hierarchy -output results/FABSCALAR_compiled.ddc
+ write -hierarchy -f verilog -o results/FABSCALAR.v
+ write_sdc results/FABSCALAR.sdc
+ write_sdf results/FABSCALAR.sdf
