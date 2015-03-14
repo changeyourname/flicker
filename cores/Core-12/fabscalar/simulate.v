@@ -15,7 +15,7 @@
 
 `timescale 1ns/100ps
 //`define ARCH_RAS
-`define PRINT
+//`define PRINT
 //`define PRINT_EVERYTHING
 
 
@@ -88,11 +88,11 @@ always @(posedge clock)
 begin
   sim_count = sim_count+1;
 
-//  if(sim_count == `SIMULATION_LENGTH)
-//  	$finish();
+  if(sim_count == `SIMULATION_LENGTH)
+  	$finish();
 
 
-  if(fabScalar.activeList.commitCount > 10000) // 50 million
+  if(fabScalar.activeList.commitCount > 50000000) // 50 million
   begin
 
 	ipc = $itor(fabScalar.activeList.commitCount)/$itor(sim_count);
