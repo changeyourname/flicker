@@ -8,9 +8,13 @@
 #
 # This is a pre-release version.  It must not be redistributed at this time.
 #
-# Purpose: This is a sample Design-Compiler script to synthesize a FabScalar
-#	   generated core.
-#*******************************************************************************
+##*******************************************************************************
+#                    Flicker Research Group, CORNELL UNIVERSITY
+#
+#Script v-1.1 -- Aashish Agarwal, Cornell University.
+#
+#
+##*******************************************************************************
 
 #date
 set base_dir "../cores/Core-12"
@@ -29,7 +33,7 @@ source scripts/read_design.tcl > log/read_design_log.txt
 
 current_design $modname
 
-write_file -format ddc -hierarchy -output ./results/FABSCALAR_read_file.ddc
+#write_file -format ddc -hierarchy -output ./results/FABSCALAR_read_file.ddc
 
 #-------------------------------------------------------------------------------
 # Set the synthetic library variable to enable use of desigware blocks.
@@ -144,7 +148,7 @@ set link_library   [concat  $target_library $synthetic_library]
 
  uniquify > log/uniquify_log.txt
 
- check_design > log/check_design_log.txt
+ #check_design > log/check_design_log.txt
 
  link > log/link_log.txt
 
@@ -160,7 +164,7 @@ set link_library   [concat  $target_library $synthetic_library]
 # place&route.
 #-------------------------------------------------------------------------------
  report_qor > results/report_qor_default.txt
- report_constraint -all_violators > all_violators.txt
+ report_constraint -all_violators > results/all_violators.txt
  report_timing > results/report_timing_default.txt
  report_area > results/area.txt
  report_power > results/power.txt
