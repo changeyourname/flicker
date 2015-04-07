@@ -1,0 +1,62 @@
+
+Global Operating Voltage = 1.2
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000ff
+    Time Units = 1ns
+    Dynamic Power Units = 1uW    (derived from V,C,T units)
+    Leakage Power Units = 1pW
+
+
+  Cell Internal Power  =   2.7913 mW   (80%)
+  Net Switching Power  = 697.0715 uW   (20%)
+                         ---------
+Total Dynamic Power    =   3.4884 mW  (100%)
+
+Cell Leakage Power     =   5.8567 mW
+
+
+                 Internal         Switching           Leakage            Total
+Power Group      Power            Power               Power              Power   (   %    )  Attrs
+--------------------------------------------------------------------------------------------------
+io_pad             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+memory             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+black_box          0.0000            0.0000            0.0000            0.0000  (   0.00%)
+clock_network     43.2814          583.4971        3.5538e+07          662.3166  (   7.09%)
+register       2.6856e+03            3.8776        1.2920e+09        3.9814e+03  (  42.61%)
+sequential         3.8154        1.5397e-02        1.8128e+08          185.1086  (   1.98%)
+combinational     58.5718          109.6809        4.3471e+09        4.5153e+03  (  48.32%)
+--------------------------------------------------------------------------------------------------
+Total          2.7912e+03 uW       697.0710 uW     5.8559e+09 pW     9.3442e+03 uW
+1
+icc_shell>
+icc_shell> report_area
+
+****************************************
+Report : area
+Design : FABSCALAR
+Version: F-2011.09
+Date   : Mon Apr  6 20:00:39 2015
+****************************************
+
+Library(s) Used:
+
+    saed90nm_typ (File: /home/student/aa2264/flicker/flicker/physical-design/toolflow/cells.db)
+
+Number of ports:                          334
+Number of nets:                         12538
+Number of cells:                          116
+Number of combinational cells:             94
+Number of sequential cells:                 0
+Number of buf/inv:                         83
+Number of references:                      34
+
+Combinational area:       855430.044167
+Noncombinational area:    319917.770372
+Net Interconnect area:    344890.836955
+
+Total cell area:          1175347.814539
+Total area:               1520238.651494
+1
+icc_shell>
+

@@ -30,7 +30,7 @@ module Complex_ALU (
 		     input [`SIZE_IMMEDIATE-1:0] 	immd_i,
 		     input [`SIZE_OPCODE_I-1:0] 	opcode_i,
 
-		     output [(2*`SIZE_DATA)-1:0] 	result_o,
+		     output [(`SIZE_DATA)-1:0] 	result_o,
 		     output [`EXECUTION_FLAGS-1:0] 	flags_o	
 	           ); 
 

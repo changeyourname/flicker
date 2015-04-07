@@ -120,5 +120,5 @@
 `define COMMIT_WIDTH            4
 `define RETIRE_WIDTH	       4
 
-`define VERIFY			// When performing Logic Synthesis, comment this line.
+//`define VERIFY			// When performing Logic Synthesis, comment this line.
 //`define ICACHE

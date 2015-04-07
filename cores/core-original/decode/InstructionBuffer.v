@@ -134,7 +134,7 @@ wire 					inst3Branch;
  * front-end stall and there is enough free physical registers for renaming. 
  * There are 8 write ports for writing 4 bypassed data.
  */
- SRAM_4R8W #(`INST_QUEUE,`INST_QUEUE_LOG,2*`SIZE_SPECIAL_REG+3+`LDST_TYPES_LOG+`INST_TYPES_LOG+`SIZE_IMMEDIATE+1+3*`SIZE_RMT_LOG+3+`SIZE_OPCODE_I+2*`SIZE_PC+`SIZE_CTI_LOG+1)
+ SRAM_8R8W #(`INST_QUEUE,`INST_QUEUE_LOG,2*`SIZE_SPECIAL_REG+3+`LDST_TYPES_LOG+`INST_TYPES_LOG+`SIZE_IMMEDIATE+1+3*`SIZE_RMT_LOG+3+`SIZE_OPCODE_I+2*`SIZE_PC+`SIZE_CTI_LOG+1)
            instBuffer(  .addr0_i(readAddr0),
                         .addr1_i(readAddr1),
                         .addr2_i(readAddr2),

@@ -366,7 +366,7 @@ SRAM_4R6W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,`SIZE_PC)
                    );
 
 
-SRAM_4R1W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,1)
+SRAM_4R4W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,1)
     ldViolateVector( .clk(clk),
                      .reset(reset | recoverFlag | mispredFlag | exceptionFlag),
                      .addr0_i(headAddr0),

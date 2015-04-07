@@ -1071,30 +1071,30 @@ end
 
 endmodule
 
-
+/*
 module PriorityEncoder(vector_i,
 	vector_o
 );
 
 parameter ENCODER_WIDTH = 32;
 
-/* I/O definitions */
+
 input wire [ENCODER_WIDTH-1:0] vector_i;
 output wire [ENCODER_WIDTH-1:0] vector_o;
 
 /* Wires and regs for combinational logic */
 
 /* Mask to reset all other bits except the first */
-reg [ENCODER_WIDTH-1:0] mask;
+//reg [ENCODER_WIDTH-1:0] mask;
 
 /* Wires for outputs */
-wire [ENCODER_WIDTH-1:0] vector;
+//wire [ENCODER_WIDTH-1:0] vector;
 
 /* Assign outputs */
-assign vector_o = vector;
+//assign vector_o = vector;
 
 /* Mask the input vector so that only the first 1'b1 is seen */
-assign vector = vector_i & mask;
+/*assign vector = vector_i & mask;
 
 integer j;
 
@@ -1111,9 +1111,8 @@ begin: ENCODER_CONSTRUCT
 	end
 end
 
-endmodule
-
-
+endmodule*/
+/*
 module Encoder(vector_i,
 	encoded_o
 );
@@ -1122,26 +1121,26 @@ parameter ENCODER_WIDTH = 32;
 parameter ENCODER_WIDTH_LOG = 5;
 
 /* I/O definitions */
-input wire [ENCODER_WIDTH-1:0] vector_i;
-output wire [ENCODER_WIDTH_LOG-1:0] encoded_o;
+//input wire [ENCODER_WIDTH-1:0] vector_i;
+//output wire [ENCODER_WIDTH_LOG-1:0] encoded_o;
 
 /* Temporary regs and wires */
-reg [ENCODER_WIDTH_LOG-1:0] s [ENCODER_WIDTH-1:0]; // Stores number itself. 
-reg [ENCODER_WIDTH_LOG-1:0] t [ENCODER_WIDTH-1:0]; // Stores (s[i] if vector[i]==1'b1 else stores 0)
-reg [ENCODER_WIDTH-1:0] u [ENCODER_WIDTH_LOG-1:0]; // Stores transpose of t (to use the | operator)
+//reg [ENCODER_WIDTH_LOG-1:0] s [ENCODER_WIDTH-1:0]; // Stores number itself. 
+//reg [ENCODER_WIDTH_LOG-1:0] t [ENCODER_WIDTH-1:0]; // Stores (s[i] if vector[i]==1'b1 else stores 0)
+//reg [ENCODER_WIDTH-1:0] u [ENCODER_WIDTH_LOG-1:0]; // Stores transpose of t (to use the | operator)
 
 /* Wires and regs for combinational logic */
-reg [ENCODER_WIDTH-1:0] compareVector;
+//reg [ENCODER_WIDTH-1:0] compareVector;
 
 /* Wires for outputs */
-reg [ENCODER_WIDTH_LOG-1:0] encoded;
+//reg [ENCODER_WIDTH_LOG-1:0] encoded;
 
 /* Assign outputs */
-assign encoded_o = encoded;
+//assign encoded_o = encoded;
 
-integer i;
-integer j;
-
+//integer i;
+//integer j;
+/*
 always @(*)
 begin: ENCODER_CONSTRUCT
 	for(i=0; i<ENCODER_WIDTH; i=i+1)
@@ -1172,4 +1171,4 @@ begin: ENCODER_CONSTRUCT
 end
 
 endmodule
-
+*/

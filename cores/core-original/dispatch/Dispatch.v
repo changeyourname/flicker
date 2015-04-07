@@ -48,16 +48,16 @@ module Dispatch( input clk,
                  input [`SIZE_ACTIVELIST_LOG:0] 	activeListCnt_i, // Current count of instructions in Active List
 
 
-		 output [3+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
+		 output [9+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
                          `SIZE_IMMEDIATE+1+`LDST_TYPES_LOG+`INST_TYPES_LOG+`SIZE_OPCODE_I+
                          2*`SIZE_PC+`SIZE_CTI_LOG:0] issueqPacket0_o,
-                 output [3+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
+                 output [9+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
                          `SIZE_IMMEDIATE+1+`LDST_TYPES_LOG+`INST_TYPES_LOG+`SIZE_OPCODE_I+
                          2*`SIZE_PC+`SIZE_CTI_LOG:0] issueqPacket1_o,
-                 output [3+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
+                 output [9+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
                          `SIZE_IMMEDIATE+1+`LDST_TYPES_LOG+`INST_TYPES_LOG+`SIZE_OPCODE_I+
                          2*`SIZE_PC+`SIZE_CTI_LOG:0] issueqPacket2_o,
-                 output [3+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
+                 output [9+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
                          `SIZE_IMMEDIATE+1+`LDST_TYPES_LOG+`INST_TYPES_LOG+`SIZE_OPCODE_I+
                          2*`SIZE_PC+`SIZE_CTI_LOG:0] issueqPacket3_o,
 
