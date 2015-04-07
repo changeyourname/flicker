@@ -286,34 +286,60 @@ end
  */
 //If the frontEndWidth_i >2 use load store queue size =32 else 16
 
-reg  front;
-reg stall0_reg;
-reg stall1_reg ;
-always@(*) begin
-  case(frontEndWidth_i)
+/* Following logic checks for empty spaces in Load-Store queue, Issue Queue and 
+ * Active List for new instructions.
+ */
+//If the frontEndWidth_i >2 use load store queue size =32 else 16
+
+  reg [1:0] front;
+  reg stall0_reg;
+  reg stall1_reg ;
+   always@(*) begin
+   case(frontEndWidth_i)
      3'd4: begin
-      front=1'd1;
+      front=2'd3;
+
      end
      3'd3: begin
-      front=1'd1;
+      front=2'd2;
+
      end
      3'd2: begin
-      front=1'd0;
+      front=2'd1;
+
      end
      3'd1: begin
-      front=1'd0;
+      front=2'd0;
+
      end
+
+ 
 endcase  
-   if(front)
-      begin
-         stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ);
-         stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ);
-      end
-   else
-      begin
-        stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ/2);
-        stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ/2);
-      end 
+
+     if(front==2'd3) begin
+     assign stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ);
+     assign stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ);
+
+     end
+
+     else if(front==2'd2) begin
+     assign stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ/2);
+     assign stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ/2);
+
+     end
+
+     else if(front==2'd1) begin
+     assign stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ/4);
+     assign stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ/4);
+
+     end
+
+  else
+   begin
+     stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ/8);
+     stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ/8);
+   
+   end 
 end
 assign stall0=stall0_reg;
 assign stall1=stall1_reg; 
