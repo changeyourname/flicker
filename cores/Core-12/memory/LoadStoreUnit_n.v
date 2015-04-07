@@ -59,11 +59,13 @@ module LSU ( input clk,
              output lsuPacketValid0_o,
              output [`CHECKPOINTS+`EXECUTION_FLAGS+`SIZE_DATA+`SIZE_PHYSICAL_LOG+`SIZE_ACTIVELIST_LOG+
                      `SIZE_ISSUEQ_LOG-1:0] lsuPacket0_o,
-             output [`SIZE_ACTIVELIST_LOG:0] ldViolationPacket_o
+             output [`SIZE_ACTIVELIST_LOG:0] ldViolationPacket_o,
+             input [2:0] frontEndWidth_i
            );
 
 reg [`SIZE_LSQ-1:0]                     ldqValid;
 reg [`SIZE_ISSUEQ_LOG+`SIZE_PHYSICAL_LOG+`SIZE_ACTIVELIST_LOG-1:0] ldq [`SIZE_LSQ-1:0];
+
 reg [`LDST_TYPES_LOG-1:0]               ldqSizeofLD     [`SIZE_LSQ-1:0];
 reg [`SIZE_DCACHE_ADDR-1:0]             ldqAddr1        [`SIZE_LSQ-1:0];
 reg [`SIZE_DCACHE_ADDR-1:0]             ldqAddr2        [`SIZE_LSQ-1:0];
@@ -255,14 +257,79 @@ L1DataCache L1dCache ( .clk(clk),
 assign loadQueueCnt_o   =  ldqCount;
 assign storeQueueCnt_o  =  stqCount;
 
+//Flicker modification
+
+reg [1:0] front;
+reg [`SIZE_LSQ_LOG-2:0]                 ldqtail_t1;
+reg [`SIZE_LSQ_LOG-2:0]                 ldqhead_t1;
+reg [`SIZE_LSQ_LOG-3:0]                 ldqtail_t2;
+reg [`SIZE_LSQ_LOG-3:0]                 ldqhead_t2;
+reg [`SIZE_LSQ_LOG-4:0]                 ldqtail_t3;
+reg [`SIZE_LSQ_LOG-4:0]                 ldqhead_t3;
+always@(*)
+begin:gghg
+ case(frontEndWidth_i)
+     3'd4: begin
+      front=2'd3;
+
+     end
+     3'd3: begin
+      front=2'd2;
+
+     end
+     3'd2: begin
+      front=2'd1;
+
+     end
+     3'd1: begin
+      front=2'd0;
+          end
+     default: begin
+       front=2'd3;
+       
+     end
+endcase
+end
+
 always @(*)
 begin:GENERATE_LD_CNT
  /* Following generates the final instruction count in the LD queue, taking into
   * affect New instructions and Commiting instructions in this cycle.
   */
+ case(front)
+   2'd2: begin
+
+ ldqhead_t1              = ldqHead + cntLdCom;
+ ldqtail_t1              = ldqTail + cntLdNew;
+ ldqhead_t		 = ldqhead_t1;
+ ldqtail_t		 = ldqtail_t1;
+ ldqtail_t2		 =3'bZ; 
+ end
+
+  2'd1: begin
+
+ ldqhead_t2              = ldqHead + cntLdCom;
+ ldqtail_t2              = ldqTail + cntLdNew;
+ ldqhead_t		 = ldqhead_t2;
+ ldqtail_t		 = ldqtail_t2;
+  
+ end
+
+  2'd0: begin
+
+ ldqhead_t3              = ldqHead + cntLdCom;
+ ldqtail_t3              = ldqTail + cntLdNew;
+ ldqhead_t		 = ldqhead_t3;
+ ldqtail_t		 = ldqtail_t3;
+  
+ end
+ 
+ default: begin
  ldqhead_t              = ldqHead + cntLdCom;
  ldqtail_t              = ldqTail + cntLdNew;
 
+end
+endcase
  ldqCount_f             = (ldqCount+cntLdNew)-cntLdCom;
 end
 
@@ -798,15 +865,74 @@ begin:LDQ_UPDATE
         ldqAddrValid            <= 0;
         ldqWriteBack            <= 0;
         precedingSTvalid        <= 0;
-        for(i=0;i<`SIZE_LSQ;i=i+1)
+       
+       
+       for(i=0;i<`SIZE_LSQ;i=i+1)
         begin
+                case(front)
+                2'd0: if(i<=3) begin
+                      ldqData[i]	<=0;
+                      ldq[i]    	<=0;
+		      ldqSizeofLD[i]    <=0;
+  		      ldqAddr1[i]	<=0;
+                      ldqAddr2[i]       <=0;
+
+                    end
+ 		      else begin
+		      
+                      ldqData[i]        <=32'bz;
+                      ldq[i]            <=32'bz;
+                      ldqSizeofLD[i]    <=32'bz;
+                      ldqAddr1[i]       <=32'bz;
+                      ldqAddr2[i]       <=32'bz;
+                      end
+  
+                2'd1: if(i<=7) begin
+                      ldqData[i]        <=0;
+                      ldq[i]            <=0;
+                      ldqSizeofLD[i]    <=0;
+                      ldqAddr1[i]       <=0;
+                      ldqAddr2[i]       <=0;
+
+                    end
+                      else begin
+
+                      ldqData[i]        <=32'bz;
+                      ldq[i]            <=32'bz;
+                      ldqSizeofLD[i]    <=32'bz;
+                      ldqAddr1[i]       <=32'bz;
+                      ldqAddr2[i]       <=32'bz;
+                      end
+
+                2'd2: if(i<=15) begin
+                      ldqData[i]        <=0;
+                      ldq[i]            <=0;
+                      ldqSizeofLD[i]    <=0;
+                      ldqAddr1[i]       <=0;
+                      ldqAddr2[i]       <=0;
+
+                    end
+                      else begin
+
+                      ldqData[i]        <=32'bz;
+                      ldq[i]            <=32'bz;
+                      ldqSizeofLD[i]    <=32'bz;
+                      ldqAddr1[i]       <=32'bz;
+                      ldqAddr2[i]       <=32'bz;
+                      end
+
+		default: begin
+                ldqData[i]<=0;
                 ldq[i]          <= 0;
                 ldqSizeofLD[i]  <= 0;
                 ldqAddr1[i]     <= 0;
                 ldqAddr2[i]     <= 0;
-                ldqData[i]      <= 0;
+                end
+                endcase
+               // ldqData[i]      <= 0;
                 ldqBranchTag[i] <= 0;
                 precedingST[i]  <= 0;
+              
         end
  end
 
