@@ -17,7 +17,7 @@
 ##*******************************************************************************
 
 #date
-set base_dir "../cores/Core-12"
+set base_dir "../cores/core-original"
 set stdcells_home /research/brg/install/bare-pkgs/noarch/synopsys-90nm/toolflow
 set clkname clock
 
@@ -55,7 +55,7 @@ set link_library   [concat  $target_library $synthetic_library]
  # setup name of the clock in your design.
 # set clkname clock
 
- set CLK_PER  100
+ set CLK_PER  2
  set REDUCE   0.01
  set CLK_SKEW 0.01
  create_clock -name $clkname -period $CLK_PER -waveform "0 [expr $CLK_PER / 2]" $clkname
