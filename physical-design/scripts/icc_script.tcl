@@ -25,8 +25,8 @@ open_mw_lib FABSCALAR_LIB
 
 import_designs -format ddc -top FABSCALAR -cel FABSCALAR {/home/student/aa2264/flicker/flicker/physical-design/results/FABSCALAR_compiled.ddc}
 
-create_floorplan -core_utilization 0.65 -start_first_row -flip_first_row -left_io2core 10 -bottom_io2core 10 -right_io2core 10 -top_io2core 10
-create_fp_placement -effort High -congestion_driven -Hierarchical gravity   
+create_floorplan -core_utilization 0.45 -start_first_row -flip_first_row -left_io2core 10 -bottom_io2core 10 -right_io2core 10 -top_io2core 10
+create_fp_placement -effort High -congestion_driven 
 
 
 
@@ -49,7 +49,7 @@ puts "start_place"
 
 ## This should be changed back once we figure out how to deal with read_def!!!!
 ## place_opt -effort high -optimize_dft -congestion
-place_opt -effort high -continue_on_missing_scandef -congestion
+#place_opt -effort high -continue_on_missing_scandef -congestion
 
 #legalize_placement -effort high -incremental 
 

@@ -37,7 +37,7 @@ set fetch 	"FabScalarParam.v SimpleScalar_ISA.v RAS.v BTB.v SelectInst.v \
 		 Fetch2Decode.v CtrlQueue.v"
 
 set decode	"FabScalarParam.v SimpleScalar_ISA.v Decode.v Decode_PISA.v PreDecode_PISA.v \
-		 InstructionBuffer.v InstBufRename.v"
+		 InstructionBuffer.v InstBufRename.v DecodeRename.v"
 
 set rename      "FabScalarParam.v SimpleScalar_ISA.v SpecFreeList.v RenameMapTable.v Rename.v \
 		 RenameDispatch.v"
@@ -66,7 +66,7 @@ set misc        "FabScalarParam.v SimpleScalar_ISA.v"
 		 SRAM_4R4W_FREELIST.v SRAM_4R8W.v SRAM_8R4W_PIPE.v SRAM_8R4W_PIPE_NEXT.v \
 		 SRAM_8R4W_RMT.v"
 
-set pmem	"FabScalarParam.v SimpleScalar_ISA.v L1DataCache.v"
+#set pmem	"FabScalarParam.v SimpleScalar_ISA.v L1DataCache.v"
 
 set top         "FabScalarParam.v SimpleScalar_ISA.v Interface.v FABSCALAR.v"
 
