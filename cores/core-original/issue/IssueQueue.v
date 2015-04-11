@@ -471,7 +471,7 @@ assign payloadRAMDataWr3 = {inst3Source2[`SIZE_PHYSICAL_LOG:1],inst3Source1[`SIZ
 	dispatchPacket3_i[`SIZE_OPCODE_I+2*`SIZE_PC+`SIZE_CTI_LOG:0]};
 
 
-SRAM_6R4W_PAYLOAD #(`SIZE_ISSUEQ,`SIZE_ISSUEQ_LOG,`SIZE_PAYLOAD_WIDTH) payloadRAM(.clk(clk),
+SRAM_8R4W #(`SIZE_ISSUEQ,`SIZE_ISSUEQ_LOG,`SIZE_PAYLOAD_WIDTH) payloadRAM(.clk(clk),
 	.reset(reset),
 	.addr0_i(grantedEntry0),
 	.addr1_i(grantedEntry1),
@@ -516,7 +516,7 @@ assign CAM1we2 = backEndReady_i && ~(ctrlVerified_i && ctrlMispredict_i);
 assign CAM1we3 = backEndReady_i && ~(ctrlVerified_i && ctrlMispredict_i);
 
 /* Instantiate the CAM for the 2nd source operand */
-CAM_6R4W #(`SIZE_ISSUEQ,`SIZE_ISSUEQ_LOG, `SIZE_PHYSICAL_LOG) src1cam (.clk(clk),
+CAM_4R4W #(`SIZE_ISSUEQ,`SIZE_ISSUEQ_LOG, `SIZE_PHYSICAL_LOG) src1cam (.clk(clk),
 	.reset(reset),
 	.tag0_i(rsr0Tag_t[`SIZE_PHYSICAL_LOG:1]),
 	.tag1_i(rsr1Tag_t[`SIZE_PHYSICAL_LOG:1]),
@@ -545,7 +545,7 @@ CAM_6R4W #(`SIZE_ISSUEQ,`SIZE_ISSUEQ_LOG, `SIZE_PHYSICAL_LOG) src1cam (.clk(clk)
 );
 
 /* Instantiate the CAM for the 1st source operand */
-CAM_6R4W #(`SIZE_ISSUEQ,`SIZE_ISSUEQ_LOG, `SIZE_PHYSICAL_LOG) src0cam (.clk(clk),
+CAM_4R4W #(`SIZE_ISSUEQ,`SIZE_ISSUEQ_LOG, `SIZE_PHYSICAL_LOG) src0cam (.clk(clk),
 	.reset(reset),
 	.tag0_i(rsr0Tag_t[`SIZE_PHYSICAL_LOG:1]),
 	.tag1_i(rsr1Tag_t[`SIZE_PHYSICAL_LOG:1]),

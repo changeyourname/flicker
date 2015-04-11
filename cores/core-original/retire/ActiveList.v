@@ -312,7 +312,7 @@ SRAM_4R4W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,2+`SIZE_PC+`SIZE_RMT_LOG+2*`SI
 		   );
 
 
-SRAM_4R6W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,`WRITEBACK_FLAGS)
+SRAM_4R4W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,`WRITEBACK_FLAGS)
     ctrlActiveList ( .clk(clk),
                      .reset(reset | violateBit0_f | ctrlMispredict_f | exceptionBit0_f),
                      .addr0_i(headAddr0),
@@ -352,7 +352,7 @@ SRAM_4R6W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,`WRITEBACK_FLAGS)
  * supported, currently. The mis-predicted contol instruction is resolved when 
  * it reaches the head of the Active List.
  */
-SRAM_4R6W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,`SIZE_PC)
+SRAM_4R4W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,`SIZE_PC)
     targetAddrActiveList ( .clk(clk),
                      .reset(reset | recoverFlag | mispredFlag | exceptionFlag),
                      .addr0_i(headAddr0),
