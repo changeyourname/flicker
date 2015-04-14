@@ -317,20 +317,20 @@ end
 endcase  
 
      if(front==2'd3) begin
-     assign stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ);
-     assign stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ);
+      stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ);
+      stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ);
 
      end
 
      else if(front==2'd2) begin
-     assign stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ/2);
-     assign stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ/2);
+      stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ/2);
+      stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ/2);
 
      end
 
      else if(front==2'd1) begin
-     assign stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ/4);
-     assign stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ/4);
+      stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ/4);
+      stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ/4);
 
      end
 
