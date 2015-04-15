@@ -869,67 +869,14 @@ begin:LDQ_UPDATE
        
        for(i=0;i<`SIZE_LSQ;i=i+1)
         begin
-                case(front)
-                2'd0: if(i<=3) begin
-                      ldqData[i]	<=0;
-                      ldq[i]    	<=0;
-		      ldqSizeofLD[i]    <=0;
-  		      ldqAddr1[i]	<=0;
-                      ldqAddr2[i]       <=0;
-
-                    end
- 		      else begin
-		      
-                      ldqData[i]        <=32'bz;
-                      ldq[i]            <=32'bz;
-                      ldqSizeofLD[i]    <=32'bz;
-                      ldqAddr1[i]       <=32'bz;
-                      ldqAddr2[i]       <=32'bz;
-                      end
-  
-                2'd1: if(i<=7) begin
-                      ldqData[i]        <=0;
-                      ldq[i]            <=0;
-                      ldqSizeofLD[i]    <=0;
-                      ldqAddr1[i]       <=0;
-                      ldqAddr2[i]       <=0;
-
-                    end
-                      else begin
-
-                      ldqData[i]        <=32'bz;
-                      ldq[i]            <=32'bz;
-                      ldqSizeofLD[i]    <=32'bz;
-                      ldqAddr1[i]       <=32'bz;
-                      ldqAddr2[i]       <=32'bz;
-                      end
-
-                2'd2: if(i<=15) begin
-                      ldqData[i]        <=0;
-                      ldq[i]            <=0;
-                      ldqSizeofLD[i]    <=0;
-                      ldqAddr1[i]       <=0;
-                      ldqAddr2[i]       <=0;
-
-                    end
-                      else begin
-
-                      ldqData[i]        <=32'bz;
-                      ldq[i]            <=32'bz;
-                      ldqSizeofLD[i]    <=32'bz;
-                      ldqAddr1[i]       <=32'bz;
-                      ldqAddr2[i]       <=32'bz;
-                      end
-
-		default: begin
-                ldqData[i]<=0;
-                ldq[i]          <= 0;
-                ldqSizeofLD[i]  <= 0;
-                ldqAddr1[i]     <= 0;
-                ldqAddr2[i]     <= 0;
-                end
-                endcase
-               // ldqData[i]      <= 0;
+               
+               
+               
+                ldq[i]    	<=0;
+	        ldqSizeofLD[i]  <=0;
+  	        ldqAddr1[i]	<=0;
+                ldqAddr2[i]     <=0;
+                ldqData[i]      <= 0;
                 ldqBranchTag[i] <= 0;
                 precedingST[i]  <= 0;
               
@@ -1311,7 +1258,7 @@ begin:STQ_UPDATE
     begin
         stqValid[stqHead]       <= 1'b0;
         stqAddrValid[stqHead]   <= 1'b0;
-        stqCommit[stqHead]      <= 1'b0;
+       // stqCommit[stqHead]      <= 1'b0;
     end
 
     for(l=0;l<`SIZE_LSQ;l=l+1)
@@ -1648,7 +1595,11 @@ begin
                 stqCommit               <= 0;
         else
         begin
-              case(cntStCom)
+	      if(stCommit & ~ctrlMispredict_i)
+         begin
+              stqCommit[stqHead] <=1'b0;
+         end     
+         case(cntStCom)
 	4'd1:
 	begin
                         stqCommit[index0StCom]      <= 1'b1;	
