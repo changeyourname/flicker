@@ -91,6 +91,7 @@ module ActiveList(
 
 //Flicker
 reg [3:0] frontEndMask;
+reg [1:0] front;
 always@(*)
 begin
    frontEndMask = 4'd0;
@@ -108,8 +109,33 @@ begin
 	frontEndMask = 4'b1000;
      end
    endcase
+
 end 	
 
+always@(*)
+begin
+ case(frontEndWidth_i)
+     3'd4: begin
+      front=2'd3;
+
+     end
+     3'd3: begin
+      front=2'd2;
+
+     end
+     3'd2: begin
+      front=2'd1;
+
+     end
+     3'd1: begin
+      front=2'd0;
+          end
+     default: begin
+       front=2'd3;
+       
+     end
+endcase 
+end
 
 
 /* Following declares the Active head pointer and tail pointer.
@@ -129,15 +155,46 @@ reg [`SIZE_PC-1:0]                     		exceptionPC;
 
 /* Following declares Wires and regs for the combinatorial logic.
 */
-wire [`SIZE_ACTIVELIST_LOG-1:0] 		tailAddr0;
-wire [`SIZE_ACTIVELIST_LOG-1:0] 		tailAddr1;
-wire [`SIZE_ACTIVELIST_LOG-1:0] 		tailAddr2;
-wire [`SIZE_ACTIVELIST_LOG-1:0] 		tailAddr3;
+reg [`SIZE_ACTIVELIST_LOG-1:0] 		       tailAddr0;
+reg [`SIZE_ACTIVELIST_LOG-2:0]                 tailAddr0_1;
+reg [`SIZE_ACTIVELIST_LOG-3:0]                 tailAddr0_2;
+reg [`SIZE_ACTIVELIST_LOG-4:0]                 tailAddr0_3;
 
-wire [`SIZE_ACTIVELIST_LOG-1:0] 		headAddr0;
-wire [`SIZE_ACTIVELIST_LOG-1:0] 		headAddr1;
-wire [`SIZE_ACTIVELIST_LOG-1:0] 		headAddr2;
-wire [`SIZE_ACTIVELIST_LOG-1:0] 		headAddr3;
+reg [`SIZE_ACTIVELIST_LOG-1:0] 		       tailAddr1;
+reg [`SIZE_ACTIVELIST_LOG-2:0]                 tailAddr1_1;
+reg [`SIZE_ACTIVELIST_LOG-3:0]                 tailAddr1_2;
+reg [`SIZE_ACTIVELIST_LOG-4:0]                 tailAddr1_3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0] 		       tailAddr2;
+reg [`SIZE_ACTIVELIST_LOG-2:0]                 tailAddr2_1;
+reg [`SIZE_ACTIVELIST_LOG-3:0]                 tailAddr2_2;
+reg [`SIZE_ACTIVELIST_LOG-4:0]                 tailAddr2_3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0] 		       tailAddr3;
+reg [`SIZE_ACTIVELIST_LOG-2:0]                 tailAddr3_1;
+reg [`SIZE_ACTIVELIST_LOG-3:0]                 tailAddr3_2;
+reg [`SIZE_ACTIVELIST_LOG-4:0]                 tailAddr3_3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0] 		       headAddr0;
+reg [`SIZE_ACTIVELIST_LOG-2:0]                 headAddr0_1;
+reg [`SIZE_ACTIVELIST_LOG-3:0]                 headAddr0_2;
+reg [`SIZE_ACTIVELIST_LOG-4:0]                 headAddr0_3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0] 		       headAddr1;
+reg [`SIZE_ACTIVELIST_LOG-2:0]                 headAddr1_1;
+reg [`SIZE_ACTIVELIST_LOG-3:0]                 headAddr1_2;
+reg [`SIZE_ACTIVELIST_LOG-4:0]                 headAddr1_3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0] 		       headAddr2;
+reg [`SIZE_ACTIVELIST_LOG-2:0]                 headAddr2_1;
+reg [`SIZE_ACTIVELIST_LOG-3:0]                 headAddr2_2;
+reg [`SIZE_ACTIVELIST_LOG-4:0]                 headAddr2_3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0] 		       headAddr3;
+reg [`SIZE_ACTIVELIST_LOG-2:0]                 headAddr3_1;
+reg [`SIZE_ACTIVELIST_LOG-3:0]                 headAddr3_2;
+reg [`SIZE_ACTIVELIST_LOG-4:0]                 headAddr3_3;
+
 
 wire [`SIZE_ACTIVELIST_LOG-1:0] 		fuAddr0;
 wire 						fuEn0;
@@ -163,9 +220,16 @@ wire 						ctrlMispredict_f;
 wire [`SIZE_ACTIVELIST_LOG-1:0]			mispredictEntry;
 
 reg [`SIZE_ACTIVELIST_LOG:0]			activeListCount_f;
-reg [`SIZE_ACTIVELIST_LOG-1:0] 			newheadAL;
-reg [`SIZE_ACTIVELIST_LOG-1:0] 			tailAL_f;
 
+reg [`SIZE_ACTIVELIST_LOG-1:0] 			newheadAL;
+reg [`SIZE_ACTIVELIST_LOG-2:0] 			newheadAL1;
+reg [`SIZE_ACTIVELIST_LOG-3:0] 			newheadAL2;
+reg [`SIZE_ACTIVELIST_LOG-4:0] 			newheadAL3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0] 			tailAL_f;
+reg [`SIZE_ACTIVELIST_LOG-2:0] 			tailAL_f1;
+reg [`SIZE_ACTIVELIST_LOG-3:0] 			tailAL_f2;
+reg [`SIZE_ACTIVELIST_LOG-4:0] 			tailAL_f3;
 reg [`COMMIT_WIDTH-1:0]				totalCommit;
 
 reg [`COMMIT_WIDTH-1:0]				commitVector;
@@ -366,7 +430,7 @@ SRAM_4R6W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,`SIZE_PC)
                    );
 
 
-SRAM_4R4W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,1)
+SRAM_4R1W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,1)
     ldViolateVector( .clk(clk),
                      .reset(reset | recoverFlag | mispredFlag | exceptionFlag),
                      .addr0_i(headAddr0),
@@ -407,19 +471,124 @@ assign exceptionPC_o	= exceptionPC;
 /* Following generates write address for writing into Active List, starting 
  * from the tail.
  */
- assign tailAddr0  = tailAL+0;
- assign tailAddr1  = tailAL+1;
- assign tailAddr2  = tailAL+2;
- assign tailAddr3  = tailAL+3;
+always@(*) begin
+  
+  case(front)
+  
+  2'd3: begin 
+  tailAddr0  = tailAL+0;
+  tailAddr1  = tailAL+1;
+  tailAddr2  = tailAL+2;
+  tailAddr3  = tailAL+3;
+  end
+
+  2'd2: begin
+  tailAddr0_1  = tailAL+0;
+  tailAddr1_1  = tailAL+1;
+  tailAddr2_1  = tailAL+2;
+  tailAddr3_1  = tailAL+3;
+  tailAddr0    = tailAddr0_1;
+  tailAddr1    = tailAddr1_1;
+  tailAddr2    = tailAddr2_1;
+  tailAddr3    = tailAddr3_1;
+
+  end
+
+2'd1: begin
+  tailAddr0_2  = tailAL+0;
+  tailAddr1_2  = tailAL+1;
+  tailAddr2_2  = tailAL+2;
+  tailAddr3_2  = tailAL+3;
+  tailAddr0    = tailAddr0_2;
+  tailAddr1    = tailAddr1_2;
+  tailAddr2    = tailAddr2_2;
+  tailAddr3    = tailAddr3_2;
+
+  end
+
+2'd0: begin
+  tailAddr0_3  = tailAL+0;
+  tailAddr1_3  = tailAL+1;
+  tailAddr2_3  = tailAL+2;
+  tailAddr3_3  = tailAL+3;
+  tailAddr0    = tailAddr0_3;
+  tailAddr1    = tailAddr1_3;
+  tailAddr2    = tailAddr2_3;
+  tailAddr3    = tailAddr3_3;
+
+  end
+
+default: begin
+
+  tailAddr0  = tailAL+0;
+  tailAddr1  = tailAL+1;
+  tailAddr2  = tailAL+2;
+  tailAddr3  = tailAL+3;
+  
+  end
+endcase
+
+
+
+
 
  /* Following generates read address for reading from Active List, starting 
   * from the head.
   */
- assign headAddr0  = headAL+0;
- assign headAddr1  = headAL+1;
- assign headAddr2  = headAL+2;
- assign headAddr3  = headAL+3;
+ case(front)
+ 2'd3:begin
+  headAddr0  = headAL+0;
+  headAddr1  = headAL+1;
+  headAddr2  = headAL+2;
+  headAddr3  = headAL+3;
+end
 
+ 2'd2:begin
+  headAddr0_1  = headAL+0;
+  headAddr1_1  = headAL+1;
+  headAddr2_1  = headAL+2;
+  headAddr3_1  = headAL+3;
+  
+  headAddr0    = headAddr0_1;
+  headAddr1    = headAddr1_1;
+  headAddr2    = headAddr2_1;
+  headAddr3    = headAddr3_1;
+end
+
+  2'd1:begin
+  headAddr0_2  = headAL+0;
+  headAddr1_2  = headAL+1;
+  headAddr2_2  = headAL+2;
+  headAddr3_2  = headAL+3;
+  
+  headAddr0    = headAddr0_2;
+  headAddr1    = headAddr1_2;
+  headAddr2    = headAddr2_2;
+  headAddr3    = headAddr3_2;
+end
+
+2'd0:begin
+  headAddr0_3  = headAL+0;
+  headAddr1_3  = headAL+1;
+  headAddr2_3  = headAL+2;
+  headAddr3_3  = headAL+3;
+  
+  headAddr0    = headAddr0_3;
+  headAddr1    = headAddr1_3;
+  headAddr2    = headAddr2_3;
+  headAddr3    = headAddr3_3;
+end
+
+default: begin
+  headAddr0  = headAL+0;
+  headAddr1  = headAL+1;
+  headAddr2  = headAL+2;
+  headAddr3  = headAL+3;
+end
+
+endcase
+
+end
  /* Following extracts write addr, enable and data information from the control
   * packet sent by FU. 
   * The information is written into ctrlActiveList RAM module. 
@@ -456,14 +625,62 @@ assign exceptionPC_o	= exceptionPC;
  always @(*)
  begin:GENERATE_COUNT
   reg [`SIZE_ACTIVELIST_LOG-1:0] tailAL_mispre;
+  /*reg [`SIZE_ACTIVELIST_LOG-2:0] tailAL_mispre_1;
+  reg [`SIZE_ACTIVELIST_LOG-3:0] tailAL_mispre_2;
+  reg [`SIZE_ACTIVELIST_LOG-4:0] tailAL_mispre_3;*/
   reg                            isWrap1;
   reg [`SIZE_ACTIVELIST_LOG-1:0] diff1;
   reg [`SIZE_ACTIVELIST_LOG-1:0] diff2;
   reg [`SIZE_ACTIVELIST_LOG-1:0] cnt1;
- 
+
+ // case(front)
+  
+ // 2'd3: begin
+ tailAL_f       = (backEndReady_i) ? (tailAL+frontEndWidth_i):tailAL;
+/* end
+ 2'd2: begin
+  tailAL_f1      = (backEndReady_i) ? (tailAL+frontEndWidth_i):tailAL;
+  tailAL_f       = tailAL_f1;
+  end 
+  2'd1: begin
+  tailAL_f2      = (backEndReady_i) ? (tailAL+frontEndWidth_i):tailAL;
+  tailAL_f       = tailAL_f2;
+  end  
+  2'd0:begin
+  tailAL_f3      = (backEndReady_i) ? (tailAL+frontEndWidth_i):tailAL;
+  tailAL_f       = tailAL_f3;
+  end 
+  
+  default:begin
   tailAL_f       = (backEndReady_i) ? (tailAL+frontEndWidth_i):tailAL;
-  tailAL_mispre  = mispredictEntry + 1'b1;
- 
+  end
+  endcase*/
+ // case(front)
+ // 2'd3: begin
+  tailAL_mispre  =  mispredictEntry + 1'b1;
+ /* end
+  
+  2'd2: begin
+  tailAL_mispre_1=  mispredictEntry + 1'b1;
+  tailAL_mispre    =  tailAL_mispre_1;
+  end
+
+   2'd1: begin
+  tailAL_mispre_2=  mispredictEntry + 1'b1;
+  tailAL_mispre    =  tailAL_mispre_2;
+  end
+  
+  2'd0: begin
+  tailAL_mispre_3=  mispredictEntry + 1'b1;
+  tailAL_mispre    =  tailAL_mispre_3;
+  end
+  
+  default: begin
+  tailAL_mispre  =  mispredictEntry + 1'b1;
+  end
+
+  endcase
+  */
   isWrap1        = (newheadAL > tailAL_mispre);
  
   diff1          =  tailAL_mispre - newheadAL;
@@ -582,7 +799,26 @@ assign exceptionPC_o	= exceptionPC;
   casex(commitVector)
 	4'bxx01:
     begin
-       	newheadAL     	= headAL+1;    
+       // case(front)
+       // 2'd3: begin
+       	newheadAL     	= headAL+1;
+      /*  end
+        2'd2: begin
+        newheadAL1      = headAL+1;
+        newheadAL       = newheadAL1;
+        end
+        2'd1: begin
+        newheadAL2      = headAL+1;
+        newheadAL       = newheadAL2;
+        end
+        2'd0: begin
+        newheadAL3      = headAL+1;
+        newheadAL       = newheadAL3;
+        end
+        default: begin
+        newheadAL	= headAL+1;
+        end
+        endcase */
  	totalCommit	= 1;
 	commitValid0  	= dataAl0[0];
 	commitPacket0 	= dataAl0[`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:1];
@@ -601,7 +837,40 @@ assign exceptionPC_o	= exceptionPC;
 
 	4'bx011:
     begin
-       	newheadAL     	= headAL+2;    
+        // case(front)
+       // 2'd3: begin
+       	newheadAL     	= headAL+2;
+       /* end
+        2'd2: begin
+        newheadAL1      = headAL+2;
+        newheadAL       = newheadAL1;
+        end
+        2'd1: begin
+        newheadAL2      = headAL+2;
+        newheadAL       = newheadAL2;
+        end
+        2'd0: begin
+        newheadAL3      = headAL+2;
+        newheadAL       = newheadAL3;
+        end
+        default: begin
+        newheadAL	= headAL+2;
+        end
+        endcase*/
+       //if(front == 2'd3)
+       //	newheadAL     	= headAL+2;
+       /* else if (front == 2'd2) begin
+        newheadAL1      = headAL+2;
+        newheadAL       = newheadAL1;
+        end
+        else if (front == 2'd1) begin
+        newheadAL2      = headAL+2;
+        newheadAL       = newheadAL2;
+        end
+        else begin
+        newheadAL3      = headAL+2;    
+        newheadAL       = newheadAL3;
+        end */
  	totalCommit	= 2;
 	commitValid0  	= dataAl0[0];
 	commitPacket0 	= dataAl0[`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:1];
@@ -628,7 +897,40 @@ assign exceptionPC_o	= exceptionPC;
 
 	4'b0111:
     begin
-       	newheadAL     	= headAL+3;    
+       //  case(front)
+       // 2'd3: begin
+       	newheadAL     	= headAL+3;
+       /* end
+        2'd2: begin
+        newheadAL1      = headAL+3;
+        newheadAL       = newheadAL1;
+        end
+        2'd1: begin
+        newheadAL2      = headAL+3;
+        newheadAL       = newheadAL2;
+        end
+        2'd0: begin
+        newheadAL3      = headAL+3;
+        newheadAL       = newheadAL3;
+        end
+        default: begin
+        newheadAL	= headAL+3;
+        end
+        endcase */
+       //if(front == 2'd3)
+      // 	newheadAL     	= headAL+3;
+       /* else if (front == 2'd2) begin
+        newheadAL1      = headAL+3;
+        newheadAL       = newheadAL1;
+        end
+        else if (front == 2'd1) begin
+        newheadAL2      = headAL+3;
+        newheadAL       = newheadAL2;
+        end
+        else begin
+        newheadAL3      = headAL+3;   
+        newheadAL       = newheadAL3;
+        end */
  	totalCommit	= 3;
 	commitValid0  	= dataAl0[0];
 	commitPacket0 	= dataAl0[`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:1];
@@ -663,7 +965,40 @@ assign exceptionPC_o	= exceptionPC;
 
 	4'b1111:
     begin
-       	newheadAL     	= headAL+4;    
+        //case(front)
+       // 2'd3: begin
+       	newheadAL     	= headAL+4;
+       /* end
+        2'd2: begin
+        newheadAL1      = headAL+4;
+        newheadAL       = newheadAL1;
+        end
+        2'd1: begin
+        newheadAL2      = headAL+4;
+        newheadAL       = newheadAL2;
+        end
+        2'd0: begin
+        newheadAL3      = headAL+4;
+        newheadAL       = newheadAL3;
+        end
+        default: begin
+        newheadAL	= headAL+4;
+        end
+        endcase*/
+       // if(front == 2'd3)
+       //	newheadAL     	= headAL+4;
+       /* else if (front == 2'd2) begin
+        newheadAL1      = headAL+4;
+        newheadAL       = newheadAL1;
+        end
+        else if (front == 2'd1) begin
+        newheadAL2      = headAL+4;
+        newheadAL       = newheadAL2;
+        end
+        else begin
+        newheadAL3      = headAL+4;    
+        newheadAL       = newheadAL3;
+        end */
  	totalCommit	= 4;
 	commitValid0  	= dataAl0[0];
 	commitPacket0 	= dataAl0[`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:1];
@@ -710,10 +1045,86 @@ assign exceptionPC_o	= exceptionPC;
  
  /* Following assigns output signals of this module.
   */
- assign activeListId0_o  = tailAL+0;
- assign activeListId1_o  = tailAL+1;
- assign activeListId2_o  = tailAL+2;
- assign activeListId3_o  = tailAL+3;
+reg [`SIZE_ACTIVELIST_LOG-1:0] activeListId0_0;
+reg [`SIZE_ACTIVELIST_LOG-1:0] activeListId1_0;
+reg [`SIZE_ACTIVELIST_LOG-1:0] activeListId2_0;
+reg [`SIZE_ACTIVELIST_LOG-1:0] activeListId3_0;
+
+reg [`SIZE_ACTIVELIST_LOG-2:0] activeListId0_1;
+reg [`SIZE_ACTIVELIST_LOG-2:0] activeListId1_1;
+reg [`SIZE_ACTIVELIST_LOG-2:0] activeListId2_1;
+reg [`SIZE_ACTIVELIST_LOG-2:0] activeListId3_1;
+
+reg [`SIZE_ACTIVELIST_LOG-3:0] activeListId0_2;
+reg [`SIZE_ACTIVELIST_LOG-3:0] activeListId1_2;
+reg [`SIZE_ACTIVELIST_LOG-3:0] activeListId2_2;
+reg [`SIZE_ACTIVELIST_LOG-3:0] activeListId3_2;
+
+reg [`SIZE_ACTIVELIST_LOG-4:0] activeListId0_3;
+reg [`SIZE_ACTIVELIST_LOG-4:0] activeListId1_3;
+reg [`SIZE_ACTIVELIST_LOG-4:0] activeListId2_3;
+reg [`SIZE_ACTIVELIST_LOG-4:0] activeListId3_3;
+
+always@(*)
+begin: ALID
+case(front)
+2'd3:begin
+ activeListId0_0  = tailAL+0;
+ activeListId1_0  = tailAL+1;
+ activeListId2_0  = tailAL+2;
+ activeListId3_0  = tailAL+3;
+end
+2'd2:begin
+ activeListId0_1  = tailAL+0;
+ activeListId1_1  = tailAL+1;
+ activeListId2_1  = tailAL+2;
+ activeListId3_1  = tailAL+3;
+ 
+ activeListId0_0  = activeListId0_1;
+ activeListId1_0  = activeListId1_1;
+ activeListId2_0  = activeListId2_1;
+ activeListId3_0  = activeListId3_1;
+
+end
+2'd1:begin
+ activeListId0_2  = tailAL+0;
+ activeListId1_2  = tailAL+1;
+ activeListId2_2  = tailAL+2;
+ activeListId3_2  = tailAL+3;
+ 
+ activeListId0_0  = activeListId0_2;
+ activeListId1_0  = activeListId1_2;
+ activeListId2_0  = activeListId2_2;
+ activeListId3_0  = activeListId3_2;
+
+end
+2'd0:begin
+ activeListId0_3  = tailAL+0;
+ activeListId1_3  = tailAL+1;
+ activeListId2_3  = tailAL+2;
+ activeListId3_3  = tailAL+3; 
+ activeListId0_0  = activeListId0_3;
+ activeListId1_0  = activeListId1_3;
+ activeListId2_0  = activeListId2_3;
+ activeListId3_0  = activeListId3_3;
+
+
+end
+default: begin
+ activeListId0_0  = tailAL+0;
+ activeListId1_0  = tailAL+1;
+ activeListId2_0  = tailAL+2;
+ activeListId3_0  = tailAL+3;
+ end
+endcase
+end
+
+ assign activeListId0_o = activeListId0_0;
+ assign activeListId1_o = activeListId1_0;
+ assign activeListId2_o = activeListId2_0;
+ assign activeListId3_o = activeListId3_0;
+
+
 
  assign activeListCnt_o  = activeListCount;
 
