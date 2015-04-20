@@ -328,32 +328,445 @@ integer 					commitCnt3;
    requirements. "ctrlActiveList" needs additional write ports to write the control
    information when an instruction has completed execution.
 ************************************************************************************/
-SRAM_4R4W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG+1)
-        activeList ( .clk(clk),
-                     .reset(reset | recoverFlag | mispredFlag | exceptionFlag),
-		     .addr0_i(headAddr0),
-		     .addr1_i(headAddr1),
-		     .addr2_i(headAddr2),
-		     .addr3_i(headAddr3),
 
-                     .addr0wr_i(tailAddr0),
-		     .we0_i(backEndReady_i),
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr0_sram0;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr0_sram1;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr0_sram2;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr0_sram3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr1_sram0;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr1_sram1;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr1_sram2;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr1_sram3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr2_sram0;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr2_sram1;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr2_sram2;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr2_sram3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr3_sram0;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr3_sram1;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr3_sram2;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  headAddr3_sram3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr0_sram0;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr0_sram1;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr0_sram2;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr0_sram3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr1_sram0;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr1_sram1;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr1_sram2;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr1_sram3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr2_sram0;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr2_sram1;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr2_sram2;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr2_sram3;
+
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr3_sram0;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr3_sram1;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr3_sram2;
+reg [`SIZE_ACTIVELIST_LOG-1:0]  tailAddr3_sram3;
+
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl0_s0;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl1_s0;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl2_s0;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl3_s0;
+
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl0_s1;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl1_s1;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl2_s1;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl3_s1;
+
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl0_s2;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl1_s2;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl2_s2;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl3_s2;
+
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl0_s3;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl1_s3;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl2_s3;
+wire [2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG:0] dataAl3_s3;
+
+
+reg                             sram0_a0_wen;
+reg                             sram0_a1_wen;
+reg                             sram0_a2_wen;
+reg                             sram0_a3_wen;
+reg                             sram1_a0_wen;
+reg                             sram1_a1_wen;
+reg                             sram1_a2_wen;
+reg                             sram1_a3_wen;
+
+reg                             sram2_a0_wen;
+reg                             sram2_a1_wen;
+reg                             sram2_a2_wen;
+reg                             sram2_a3_wen;
+reg                             sram3_a0_wen;
+reg                             sram3_a1_wen;
+reg                             sram3_a2_wen;
+reg                             sram3_a3_wen;
+
+
+reg       [1:0]                 data0_sel;
+reg       [1:0]                 data1_sel;
+reg       [1:0]                 data2_sel;
+reg       [1:0]                 data3_sel;
+
+always@(*) begin
+if (headAddr0 >=96  && headAddr0 < 128 ) begin 
+    headAddr0_sram0 = headAddr0;
+//    headAddr0_sram1 = headAddr0 - 96;
+//    headAddr0_sram2 = headAddr0 - 96;
+    headAddr0_sram3 = headAddr0 - 96;
+    data0_sel       = 3;
+end
+else if (headAddr0 >=64  && headAddr0 <= 95 ) begin 
+    headAddr0_sram0 = headAddr0;
+    headAddr0_sram2 = headAddr0 - 64;
+    data0_sel       = 2;
+end
+else if (headAddr0 >=32  && headAddr0 <= 63 ) begin 
+    headAddr0_sram0 = headAddr0;
+    headAddr0_sram1 = headAddr0 - 32;
+    data0_sel       = 1;
+end
+else begin
+    headAddr0_sram0 = headAddr0;
+    headAddr0_sram1 = headAddr0;
+    data0_sel       = 0;
+end
+if (headAddr1 >=96 && headAddr1 < 128 ) begin 
+    headAddr1_sram0 = headAddr1;
+    headAddr1_sram3 = headAddr1 - 96;
+    data1_sel       = 3;
+end
+else if (headAddr1 >= 64 && headAddr1 <= 95 ) begin 
+    headAddr1_sram0 = headAddr1;
+    headAddr1_sram2 = headAddr1 - 64;
+    data1_sel       = 2;
+
+end
+else if (headAddr1 >= 32 && headAddr1 <= 63 ) begin 
+    headAddr1_sram0 = headAddr1;
+    headAddr1_sram1 = headAddr1 - 32;
+    data1_sel       = 1;
+
+end
+
+else begin
+    headAddr1_sram0 = headAddr1;
+    headAddr1_sram1 = headAddr1;
+    data1_sel       = 0;
+end
+if(headAddr2 >= 96 && headAddr2 < 128 ) begin 
+    headAddr2_sram0 = headAddr2;
+    headAddr2_sram3 = headAddr2 - 96;
+    data2_sel       = 3;
+end
+else if(headAddr2 >= 64 && headAddr2 <= 95 ) begin 
+    headAddr2_sram0 = headAddr2;
+    headAddr2_sram2 = headAddr2 - 64;
+    data2_sel       = 2;
+end
+else if (headAddr2 >= 32 && headAddr2 <= 63 ) begin 
+    headAddr2_sram0 = headAddr2;
+    headAddr2_sram1 = headAddr2 - 32;
+    data2_sel       = 1;
+end
+
+else begin
+    headAddr2_sram0 = headAddr2;
+    headAddr2_sram1 = headAddr2;
+    data2_sel       = 0;
+
+end
+if (headAddr3 >= 96 && headAddr3 < 128 ) begin 
+    headAddr3_sram0 = headAddr3;
+    headAddr3_sram3 = headAddr3 - 96;
+    data3_sel       = 3;
+
+end
+else if (headAddr3 >= 64 && headAddr3 <= 95 ) begin 
+    headAddr3_sram0 = headAddr3;
+    headAddr3_sram2 = headAddr3 - 64;
+    data3_sel       = 2;
+
+end
+else if (headAddr3 >= 32 && headAddr3 <= 63 ) begin 
+    headAddr3_sram0 = headAddr3;
+    headAddr3_sram1 = headAddr3 - 32;
+    data3_sel       = 1;
+
+end
+
+else begin
+    headAddr3_sram0 = headAddr3;
+    headAddr3_sram1 = headAddr3;
+    data3_sel       = 0;
+
+end
+if (tailAddr0 >= 96 && tailAddr0 < 128 ) begin
+    tailAddr0_sram0  = tailAddr0;
+    tailAddr0_sram3  = tailAddr0 - 96;
+    sram0_a0_wen         = 0;
+    sram1_a0_wen         = 0;
+    sram2_a0_wen         = 0;
+    sram3_a0_wen         = 1;
+end
+else if (tailAddr0 >= 64 && tailAddr0 <= 95 ) begin
+    tailAddr0_sram0  = tailAddr0;
+    tailAddr0_sram2  = tailAddr0 - 64;
+    sram0_a0_wen         = 0;
+    sram1_a0_wen         = 0;
+    sram2_a0_wen         = 1;
+    sram3_a0_wen         = 0;
+end
+else if (tailAddr0 >= 32 && tailAddr0 <= 63 ) begin
+    tailAddr0_sram0  = tailAddr0;
+    tailAddr0_sram1  = tailAddr0 - 32;
+    sram0_a0_wen         = 0;
+    sram1_a0_wen         = 1;
+    sram2_a0_wen         = 0;
+    sram3_a0_wen         = 0;
+end
+
+else begin
+    tailAddr0_sram0  = tailAddr0;
+    tailAddr0_sram1  = tailAddr0;
+    sram0_a0_wen         = 1;
+    sram1_a0_wen         = 0;
+    sram2_a0_wen         = 0;
+    sram3_a0_wen         = 0;
+end
+if (tailAddr1 >= 96 && tailAddr1 < 128 ) begin
+    tailAddr1_sram0  = tailAddr1;
+    tailAddr1_sram3  = tailAddr1 - 96;
+    sram0_a1_wen         = 0;
+    sram1_a1_wen         = 0;
+    sram2_a1_wen         = 0;
+    sram3_a1_wen         = 1;
+end
+else if (tailAddr1 >= 64 && tailAddr1 <= 95 ) begin
+    tailAddr1_sram0  = tailAddr1;
+    tailAddr1_sram2  = tailAddr1 - 64;
+    sram0_a1_wen         = 0;
+    sram1_a1_wen         = 0;
+    sram2_a1_wen         = 1;
+    sram3_a1_wen         = 0;
+end
+else if (tailAddr1 >= 32 && tailAddr1 <= 63 ) begin
+    tailAddr1_sram0  = tailAddr1;
+    tailAddr1_sram1  = tailAddr1 - 32;
+    sram0_a1_wen         = 0;
+    sram1_a1_wen         = 1;
+    sram2_a1_wen         = 0;
+    sram3_a1_wen         = 0;
+end
+else begin
+    tailAddr1_sram0  = tailAddr1;
+    tailAddr1_sram1  = tailAddr1;
+    sram0_a1_wen         = 1;
+    sram1_a1_wen         = 0;
+    sram2_a1_wen         = 0;
+    sram3_a1_wen         = 0;
+end
+if (tailAddr2 >= 96 && tailAddr2 < 128 ) begin
+    tailAddr2_sram0  = tailAddr2;
+    tailAddr2_sram3  = tailAddr2 - 96;
+    sram0_a2_wen         = 0;
+    sram1_a2_wen         = 0;
+    sram2_a2_wen         = 0;
+    sram3_a2_wen         = 1;
+end
+else if(tailAddr2 >= 64 && tailAddr2 <= 95 ) begin
+    tailAddr2_sram0  = tailAddr2;
+    tailAddr2_sram2  = tailAddr2 - 64;
+    sram0_a2_wen         = 0;
+    sram1_a2_wen         = 0;
+    sram2_a2_wen         = 1;
+    sram3_a2_wen         = 0;
+end
+else if (tailAddr2 >= 32 && tailAddr2 <= 63 ) begin
+    tailAddr2_sram0  = tailAddr2;
+    tailAddr2_sram1  = tailAddr2 - 32;
+    sram0_a2_wen         = 0;
+    sram1_a2_wen         = 1;
+    sram2_a2_wen         = 0;
+    sram3_a2_wen         = 0;
+end
+else begin
+    tailAddr2_sram0  = tailAddr2;
+    tailAddr2_sram1  = tailAddr2;
+    sram0_a2_wen         = 1;
+    sram1_a2_wen         = 0;
+    sram2_a2_wen         = 0;
+    sram3_a2_wen         = 0;
+end
+if (tailAddr3 >= 96 && tailAddr3 < 128 ) begin
+    tailAddr3_sram0  = tailAddr3;
+    tailAddr3_sram3  = tailAddr3 - 96;
+    sram0_a3_wen         = 0;
+    sram1_a3_wen         = 0;
+    sram2_a3_wen         = 0;
+    sram3_a3_wen         = 1;
+end
+else if (tailAddr3 >= 64 && tailAddr3 <= 95 ) begin
+    tailAddr3_sram0  = tailAddr3;
+    tailAddr3_sram2  = tailAddr3 - 64;
+    sram0_a3_wen         = 0;
+    sram1_a3_wen         = 0;
+    sram2_a3_wen         = 1;
+    sram3_a3_wen         = 0;
+end
+else if (tailAddr3 >= 32 && tailAddr3 <= 63 ) begin
+    tailAddr3_sram0  = tailAddr3;
+    tailAddr3_sram1  = tailAddr3 - 32;
+    sram0_a3_wen         = 0;
+    sram1_a3_wen         = 1;
+    sram2_a3_wen         = 0;
+    sram3_a3_wen         = 0;
+end
+
+else begin
+    tailAddr3_sram0  = tailAddr3;
+    tailAddr3_sram1  = tailAddr3;
+    sram0_a3_wen         = 1;
+    sram1_a3_wen         = 0;
+    sram2_a3_wen         = 0;
+    sram3_a3_wen         = 0;
+end
+
+
+end
+
+SRAM_4R4W #(`SIZE_ACTIVELIST/4,`SIZE_ACTIVELIST_LOG,2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG+1)
+        activeList0 ( .clk(clk),
+                     .reset(reset | recoverFlag | mispredFlag | exceptionFlag),
+		     .addr0_i(headAddr0_sram0),
+		     .addr1_i(headAddr1_sram0),
+		     .addr2_i(headAddr2_sram0),
+		     .addr3_i(headAddr3_sram0),
+
+                     .addr0wr_i(tailAddr0_sram0),
+		     .we0_i(backEndReady_i & sram0_a0_wen),
 		     .data0wr_i(alPacket0_i),
-                     .addr1wr_i(tailAddr1),
-		     .we1_i(backEndReady_i & frontEndMask[2]),
+                     .addr1wr_i(tailAddr1_sram0),
+		     .we1_i(backEndReady_i & frontEndMask[2] & sram0_a1_wen ),
 		     .data1wr_i(alPacket1_i),
-                     .addr2wr_i(tailAddr2),
-		     .we2_i(backEndReady_i & frontEndMask[1]),
+                     .addr2wr_i(tailAddr2_sram0),
+		     .we2_i(backEndReady_i & frontEndMask[1] & sram0_a2_wen ),
 		     .data2wr_i(alPacket2_i),
-                     .addr3wr_i(tailAddr3),
-		     .we3_i(backEndReady_i & frontEndMask[0]),
+                     .addr3wr_i(tailAddr3_sram0),
+		     .we3_i(backEndReady_i & frontEndMask[0] & sram0_a3_wen ),
 		     .data3wr_i(alPacket3_i),
 
-                     .data0_o(dataAl0),
-                     .data1_o(dataAl1),
-                     .data2_o(dataAl2),
-                     .data3_o(dataAl3)
+                     .data0_o(dataAl0_s0),
+                     .data1_o(dataAl1_s0),
+                     .data2_o(dataAl2_s0),
+                     .data3_o(dataAl3_s0)
 		   );
+SRAM_4R4W #(`SIZE_ACTIVELIST/4,`SIZE_ACTIVELIST_LOG,2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG+1)
+        activeList1 ( .clk(clk),
+                     .reset(reset | recoverFlag | mispredFlag | exceptionFlag),
+		     .addr0_i(headAddr0_sram1),
+		     .addr1_i(headAddr1_sram1),
+		     .addr2_i(headAddr2_sram1),
+		     .addr3_i(headAddr3_sram1),
+
+                     .addr0wr_i(tailAddr0_sram1),
+		     .we0_i(backEndReady_i & sram1_a0_wen),
+		     .data0wr_i(alPacket0_i),
+                     .addr1wr_i(tailAddr1_sram1),
+		     .we1_i(backEndReady_i & frontEndMask[2] & sram1_a1_wen),
+		     .data1wr_i(alPacket1_i),
+                     .addr2wr_i(tailAddr2_sram1),
+		     .we2_i(backEndReady_i & frontEndMask[1] & sram1_a2_wen),
+		     .data2wr_i(alPacket2_i),
+                     .addr3wr_i(tailAddr3_sram1),
+		     .we3_i(backEndReady_i & frontEndMask[0] & sram1_a3_wen),
+		     .data3wr_i(alPacket3_i),
+
+                     .data0_o(dataAl0_s1),
+                     .data1_o(dataAl1_s1),
+                     .data2_o(dataAl2_s1),
+                     .data3_o(dataAl3_s1)
+		   );
+SRAM_4R4W #(`SIZE_ACTIVELIST/4,`SIZE_ACTIVELIST_LOG,2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG+1)
+        activeList2 ( .clk(clk),
+                     .reset(reset | recoverFlag | mispredFlag | exceptionFlag),
+		     .addr0_i(headAddr0_sram2),
+		     .addr1_i(headAddr1_sram2),
+		     .addr2_i(headAddr2_sram2),
+		     .addr3_i(headAddr3_sram2),
+
+                     .addr0wr_i(tailAddr0_sram2),
+		     .we0_i(backEndReady_i & sram2_a0_wen),
+		     .data0wr_i(alPacket0_i),
+                     .addr1wr_i(tailAddr1_sram2),
+		     .we1_i(backEndReady_i & frontEndMask[2] & sram2_a1_wen ),
+		     .data1wr_i(alPacket1_i),
+                     .addr2wr_i(tailAddr2_sram2),
+		     .we2_i(backEndReady_i & frontEndMask[1] & sram2_a2_wen ),
+		     .data2wr_i(alPacket2_i),
+                     .addr3wr_i(tailAddr3_sram2),
+		     .we3_i(backEndReady_i & frontEndMask[0] & sram2_a3_wen ),
+		     .data3wr_i(alPacket3_i),
+
+                     .data0_o(dataAl0_s2),
+                     .data1_o(dataAl1_s2),
+                     .data2_o(dataAl2_s2),
+                     .data3_o(dataAl3_s2)
+		   );
+SRAM_4R4W #(`SIZE_ACTIVELIST/4,`SIZE_ACTIVELIST_LOG,2+`SIZE_PC+`SIZE_RMT_LOG+2*`SIZE_PHYSICAL_LOG+1)
+        activeList3 ( .clk(clk),
+                     .reset(reset | recoverFlag | mispredFlag | exceptionFlag),
+		     .addr0_i(headAddr0_sram3),
+		     .addr1_i(headAddr1_sram3),
+		     .addr2_i(headAddr2_sram3),
+		     .addr3_i(headAddr3_sram3),
+
+                     .addr0wr_i(tailAddr0_sram3),
+		     .we0_i(backEndReady_i & sram3_a0_wen),
+		     .data0wr_i(alPacket0_i),
+                     .addr1wr_i(tailAddr1_sram3),
+		     .we1_i(backEndReady_i & frontEndMask[2] & sram3_a1_wen ),
+		     .data1wr_i(alPacket1_i),
+                     .addr2wr_i(tailAddr2_sram3),
+		     .we2_i(backEndReady_i & frontEndMask[1] & sram3_a2_wen ),
+		     .data2wr_i(alPacket2_i),
+                     .addr3wr_i(tailAddr3_sram3),
+		     .we3_i(backEndReady_i & frontEndMask[0] & sram3_a3_wen ),
+		     .data3wr_i(alPacket3_i),
+
+                     .data0_o(dataAl0_s3),
+                     .data1_o(dataAl1_s3),
+                     .data2_o(dataAl2_s3),
+                     .data3_o(dataAl3_s3)
+		   );
+
+assign    dataAl0 = (data0_sel == 3) ? dataAl0_s3 :
+                    (data0_sel == 2) ? dataAl0_s2 :
+                    (data0_sel == 1) ? dataAl0_s1 : dataAl0_s0;
+
+assign    dataAl1 = (data1_sel == 3) ? dataAl1_s3 :
+                    (data1_sel == 2) ? dataAl1_s2 :
+                    (data1_sel == 1) ? dataAl1_s1 : dataAl1_s0;
+assign    dataAl2 = (data2_sel == 3) ? dataAl2_s3 :
+                    (data2_sel == 2) ? dataAl2_s2 :
+                    (data2_sel == 1) ? dataAl2_s1 : dataAl2_s0;
+assign    dataAl3 = (data3_sel == 3) ? dataAl3_s3 :
+                    (data3_sel == 2) ? dataAl3_s2 :
+                    (data3_sel == 1) ? dataAl3_s1 : dataAl3_s0;
+
+
+
+//assign    dataAl1 = (data1_sel) ? dataAl1_s1 : dataAl1_s0;
+
+//assign    dataAl2 = (data2_sel) ? dataAl2_s1 : dataAl2_s0;
+//assign    dataAl3 = (data3_sel) ? dataAl3_s1 : dataAl3_s0;
+
 
 
 SRAM_4R6W #(`SIZE_ACTIVELIST,`SIZE_ACTIVELIST_LOG,`WRITEBACK_FLAGS)

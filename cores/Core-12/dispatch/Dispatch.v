@@ -44,16 +44,16 @@ module Dispatch( input clk,
                  input [`SIZE_ACTIVELIST_LOG:0] 			  activeListCnt_i, // Current count of instructions in Active List
 
 
-		 output [9+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
+		 output [3+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
                  `SIZE_IMMEDIATE+1+`LDST_TYPES_LOG+`INST_TYPES_LOG+`SIZE_OPCODE_I+
                  2*`SIZE_PC+`SIZE_CTI_LOG:0] 				  issueqPacket0_o,
-                 output [9+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
+                 output [3+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
                  `SIZE_IMMEDIATE+1+`LDST_TYPES_LOG+`INST_TYPES_LOG+`SIZE_OPCODE_I+
                  2*`SIZE_PC+`SIZE_CTI_LOG:0] 				  issueqPacket1_o,
-                 output [9+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
+                 output [3+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
                  `SIZE_IMMEDIATE+1+`LDST_TYPES_LOG+`INST_TYPES_LOG+`SIZE_OPCODE_I+
                  2*`SIZE_PC+`SIZE_CTI_LOG:0] 				  issueqPacket2_o,
-                 output [9+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
+                 output [3+`CHECKPOINTS+`CHECKPOINTS_LOG+4*`SIZE_PHYSICAL_LOG+4+
                  `SIZE_IMMEDIATE+1+`LDST_TYPES_LOG+`INST_TYPES_LOG+`SIZE_OPCODE_I+
                  2*`SIZE_PC+`SIZE_CTI_LOG:0] 				  issueqPacket3_o,
 
@@ -286,14 +286,10 @@ end
  */
 //If the frontEndWidth_i >2 use load store queue size =32 else 16
 
-/* Following logic checks for empty spaces in Load-Store queue, Issue Queue and 
- * Active List for new instructions.
- */
-//If the frontEndWidth_i >2 use load store queue size =32 else 16
-
   reg [1:0] front;
   reg stall0_reg;
   reg stall1_reg ;
+  reg stall3_reg ;
    always@(*) begin
    case(frontEndWidth_i)
      3'd4: begin
@@ -310,27 +306,34 @@ end
      end
      3'd1: begin
       front=2'd0;
+      end
+      
+     default:begin 
+       front=2'd3;
 
      end
 
  
 endcase  
-
+     
      if(front==2'd3) begin
       stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ);
       stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ);
+      stall3_reg = ((activeListCnt_i + frontEndWidth_i) > `SIZE_ACTIVELIST);
 
      end
 
      else if(front==2'd2) begin
       stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ/2);
       stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ/2);
+      stall3_reg = ((activeListCnt_i + frontEndWidth_i) > `SIZE_ACTIVELIST/2);
 
      end
 
      else if(front==2'd1) begin
       stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ/4);
       stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ/4);
+      stall3_reg = ((activeListCnt_i + frontEndWidth_i) > `SIZE_ACTIVELIST/4);
 
      end
 
@@ -338,13 +341,14 @@ endcase
    begin
      stall0_reg = ((loadQueueCnt_i  + loadCnt)         > `SIZE_LSQ/8);
      stall1_reg = ((storeQueueCnt_i + storeCnt)        > `SIZE_LSQ/8);
+     stall3_reg = ((activeListCnt_i + frontEndWidth_i) > `SIZE_ACTIVELIST/8);
    
    end 
 end
 assign stall0=stall0_reg;
 assign stall1=stall1_reg; 
 assign stall2 = ((issueQueueCnt_i + frontEndWidth_i) > (issueQSize_i*8));
-assign stall3 = ((activeListCnt_i + frontEndWidth_i) > `SIZE_ACTIVELIST);
+assign stall3 = stall3_reg;
 
 assign stall4 = (stall0 | stall1 | stall2 | stall3);
 
