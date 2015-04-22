@@ -10,15 +10,15 @@ set search_path "$stdcells_home"
 set target_library "cells.db"
 set link_path "* $target_library"
 set power_enable_analysis "true"
-read_verilog "./FABSCALAR.v"  
+read_verilog "./Flicker.output.v"  
 current_design "FABSCALAR"
 //=======================================================================================//
 //--------------------------------use one of the method-------------------
 //=======================================================================================//
 set power_analysis_mode "averaged"
-read_saif "./FABSCALAR.saif"
+read_saif "./out.saif" -strip_path "simulate/fabscalar"
 report_switching_activity -list_not_annotated
-read_parasitics -increment -format sbpf "./FABSCALAR.sbpf.max"
+read_parasitics -increment -format sbpf "./Flicker.output.sbpf.max"
 report_power -verbose -hierarchy
 //=========================================================================================//
 set power_analysis_mode "time_based"
