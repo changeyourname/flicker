@@ -17,7 +17,7 @@
 ##*******************************************************************************
 
 #date
-set base_dir "../cores/core-original"
+set base_dir "../cores/Core-12"
 set stdcells_home /research/brg/install/bare-pkgs/noarch/synopsys-90nm/toolflow
 set clkname clock
 

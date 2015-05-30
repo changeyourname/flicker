@@ -13,7 +13,7 @@
 
 # set verilog search path. "base_dir" is set in the "synthesis.tcl".
 
-set base_dir "../cores/core-original/"
+set base_dir "../cores/Core-12/"
 
 set verilog_search_path        "$base_dir/ \
 				$base_dir/fetch \
@@ -34,7 +34,7 @@ set search_path [concat  $search_path $verilog_search_path]
 
 set fetch 	"FabScalarParam.v SimpleScalar_ISA.v RAS.v BTB.v SelectInst.v \
 		 BranchPrediction_2-bit.v FetchStage1.v Fetch1Fetch2.v FetchStage2.v \
-		 Fetch2Decode.v CtrlQueue.v"
+		 Fetch2Decode.v CtrlQueue.v BHR.v"
 
 set decode	"FabScalarParam.v SimpleScalar_ISA.v Decode.v Decode_PISA.v PreDecode_PISA.v \
 		 InstructionBuffer.v InstBufRename.v DecodeRename.v"
@@ -54,7 +54,7 @@ set execute     "FabScalarParam.v SimpleScalar_ISA.v fu0.v fu1.v fu2.v fu3.v \
 	         Complex_ALU.v AGEN.v AgenLsu.v Execute.v"
 
 set lsq         "FabScalarParam.v SimpleScalar_ISA.v DispatchedLoad.v DispatchedStore.v CommitLoad.v \
-		 CommitStore.v LoadStoreUnit.v"
+		 CommitStore.v LoadStoreUnit_n.v"
 
 set writebk     "FabScalarParam.v SimpleScalar_ISA.v WriteBack.v"
 
